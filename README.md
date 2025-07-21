@@ -1,5 +1,7 @@
 # Elvia Tech Challenge – Product Engineer
 
+## Part 1: Planning (written response)
+
 ## 1. High-Level Architecture
 
 This feature has two responsibilities:
@@ -142,3 +144,11 @@ To support 100,000+ users, we would:
 - During the transition, syncing databases and orchestrating traffic between monolith and microservices may cause issues.
 - We must ensure message delivery is idempotent and resilient to failure.
 - As the user base grows, managing concurrent requests and state across services (especially conversations) becomes more complex.
+
+---
+
+## Part 2: Building (coding task)
+
+For implementation details, code structure, and testing instructions, see:
+
+[README_TECH.md](./README_TECH.md)
