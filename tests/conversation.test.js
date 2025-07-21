@@ -21,12 +21,45 @@ describe('Conversation API', () => {
     expect(res.body.message).toMatch(/remoto o presencial/);
   });
 
-  it('should handle second reply (model) and return jobs', async () => {
+  it('should handle second reply (model)', async () => {
     const res = await request(app)
       .post('/api/whatsapp-webhook')
       .send({ studentId, text: 'remote' });
     expect(res.statusCode).toBe(200);
+    expect(res.body.message).toMatch(/área de estudio/);
+  });
+
+  it('should handle third reply (area) and return jobs', async () => {
+    await request(app)
+      .post('/api/start-conversation')
+      .send({ studentId });
+    await request(app)
+      .post('/api/whatsapp-webhook')
+      .send({ studentId, text: 'full-time' });
+    await request(app)
+      .post('/api/whatsapp-webhook')
+      .send({ studentId, text: 'remote' });
+    const res = await request(app)
+      .post('/api/whatsapp-webhook')
+      .send({ studentId, text: 'desarrollo' });
+    expect(res.statusCode).toBe(200);
     expect(res.body.jobs).toBeInstanceOf(Array);
     expect(res.body.jobs.length).toBeGreaterThan(0);
+  });
+
+  it('should handle "I don\'t know yet" and recommend jobs by area', async () => {
+    await request(app)
+      .post('/api/start-conversation')
+      .send({ studentId });
+    await request(app)
+      .post('/api/whatsapp-webhook')
+      .send({ studentId, text: "I don't know yet" });
+    const res = await request(app)
+      .post('/api/whatsapp-webhook')
+      .send({ studentId, text: 'desarrollo' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.jobs).toBeInstanceOf(Array);
+    expect(res.body.jobs.length).toBeGreaterThan(0);
+    expect(res.body.message).toMatch(/recomiendo estos trabajos/);
   });
 });
